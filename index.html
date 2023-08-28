@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- design side-->
+    <link
+    rel="icon"
+    type="image/png"
+    sizes="32x32"
+    href="./images/favicon-32x32.png"
+  />
+<!-- design side-->
+
+
+</head>
+<body>
+<!-- design side-->
+    <div class="background">
+    </div>
+    <div class="todo-container">
+       <div class="todo">
+        <h2>TODO</h2>
+        <img class="img" src="./images/icon-moon.svg"/>
+       </div>
+      <div class="create-todo dark">
+        <div class="checkbox-item">
+          <input class="checkbox1" type="checkbox">
+          <div class="input-div"> </div>
+    
+          </div>
+          <input class="input-text dark" type ="text" placeholder="Create a new todo">
+        </div>
+        
+        <div class="todo-list dark">
+          <ul class="ul-tag">
+            
+           </ul>
+           <div class="ul-footer">
+              <p class="left"> 5 items left </p>
+              <div class="active-texts ">
+                <h4 class="all">All</h4>
+                <h4>Active</h4>
+                <h4>Completed</h4> 
+              </div>
+              <p class="left">Clear Completed</p>
+           
+        </div>
+    
+        <div class="mobile-footer dark">
+          <div class="mobile-flex">
+          <h4 class="all">All</h4>
+          <h4>Active</h4>
+          <h4>Completed</h4> 
+        </div>
+        </div>
+    
+      </div>
+       <p class="drag left">Drag and drop reorder list</p>
+    
+    </div>
+<!-- design side-->
+
+
+
+
+
+
+    <div id="auth-widget">
+
+    </div>
+    <form action="" method="post" id="add-task-form">
+        <input id="task-id" type="hidden" name="task-id" value="">
+        <div>
+            <input type="text" name="title" id="task-title" placeholder="title" class="input">
+        </div>
+        <div>
+            <textarea name="description" id="task-description" placeholder="description" class="input"></textarea>
+        </div>
+        <div>
+            <button type="submit" id="add-task" data-action="add">Add Task</button>
+            <button type="submit" id="update-task" data-action="update">Update</button>
+        
+    </form>
+
+    <ul id="tasklist">
+    </ul>
+    <script src="js/utils.js"></script>
+    <script src="js/crud.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/index.js"></script>
+
+    
+    <script>
+        var widget = document.getElementById('auth-widget');
+    
+        function showLoggedIn(username) {
+            widget.innerHTML = `
+                <h2>Welcome, ${username}</h2>
+                <button id="logout">Logout</button>
+            `;
+    
+            document.getElementById('logout').addEventListener('click', function () {
+                
+                localStorage.removeItem('token');
+                showLoggedOut();
+            });
+        }
+        function showLoggedOut() {
+            widget.innerHTML = `
+                <h2>Please Login or Register</h2>
+                <button onclick="window.location.href='/login.html'">Login</button>
+                <button onclick="window.location.href='/register.html'">Register</button>
+            `;
+        }
+       
+        if (localStorage.getItem('token')) {
+            fetch('http://localhost:8000/users/me/',{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${localStorage.getItem('token')}`
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                showLoggedIn(data.username);
+            })
+            .catch((error)=>{
+                console.error('Error:',error);
+                showLoggedOut();
+            });
+        } else {
+            showLoggedOut();
+        }
+    </script>
+
+</body>
+</html>

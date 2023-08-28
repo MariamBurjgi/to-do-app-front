@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+</head>
+<body>
+    <h2>Register New User</h2>
+    <form id="registerForm">
+        <label for="email">Email:</label><br>
+        <input type="text" id="email" name="email"><br>
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password"><br>
+        <input type="submit" value="Register">
+    </form>
+    <p id="message"></p>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            // Prevent the form from reloading the page
+            event.preventDefault();
+            // Show loading message
+            document.getElementById('message').textContent = 'Loading...';
+            // Get form data
+            var email = document.getElementById('email').value;
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            // Send request 
+
+            fetch('http://localhost:8000/users/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    username: username,
+                    password: password
+                }),
+            })
+            .then(response => {
+                // WHEN the response is ready, hide the loading message
+                document.getElementById('message').textContent = '';
+                if (!response.ok){
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Display an success message
+                document.getElementById('message').textContent = 'User successfuly registered!';
+            })
+            .catch((error) => {
+                //Display an error message
+                document.getElementById('message').textContent = 'An error occurred!' + error;
+
+            });
+
+            
+        });
+    </script>
+</body>
+</html>
